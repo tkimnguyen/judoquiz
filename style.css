@@ -64,3 +64,9 @@ button {
 button:hover {
     background: #a0bcd5;
 }
+
+#counter {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ccc;
+}
