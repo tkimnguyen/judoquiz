@@ -3,7 +3,7 @@
 A simple, mobile-friendly flashcard site for learning Judo terminology.
 
 ## 🌐 Live Site
-https://tkimnguyen.github.io/judo-flashcards/
+https://tkimnguyen.github.io/judoquiz/
 
 ## ✨ Features
 - Tap card to flip
