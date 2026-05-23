@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Judo Flashcards</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Judo Training System</title>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
 </head>
 <body>
 
-<h1>🥋 Judo Flashcards</h1>
+<h1>🥋 Judo Training System</h1>
 
+<!-- MODE SELECT -->
+<div class="controls">
+    <button onclick="setMode('study')">Study</button>
+    <button onclick="setMode('quiz')">Quiz</button>
+    <button onclick="toggleInstructor()">Instructor Mode</button>
+</div>
+
+<!-- BELT FILTER -->
+<div class="controls">
+    <select onchange="setBelt(this.value)">
+        <option value="all">All Belts</option>
+        <option value="rokkyu">Rokkyu</option>
+        <option value="gokyu">Gokyu</option>
+        <option value="yonkyu">Yonkyu</option>
+        <option value="sankyu">Sankyu</option>
+        <option value="nikyu">Nikyu</option>
+        <option value="ikkyu">Ikkyu</option>
+    </select>
+</div>
+
+<!-- CARD -->
 <div class="card" id="card">
     <div class="card-inner" id="cardInner">
         <div class="card-front" id="frontText"></div>
@@ -19,20 +41,28 @@
     </div>
 </div>
 
+<!-- QUIZ -->
+<div id="quizButtons" class="controls" style="display:none;">
+    <button onclick="answer(true)">Correct</button>
+    <button onclick="answer(false)">Wrong</button>
+</div>
+
 <div class="controls">
-    <button onclick="prevCard()">Previous</button>
+    <button onclick="prevCard()">Prev</button>
     <button onclick="flipCard()">Flip</button>
     <button onclick="nextCard()">Next</button>
 </div>
 
-<div class="controls">
-    <button onclick="shuffleDeck()">Shuffle</button>
-</div>
-
 <p id="counter"></p>
+<p id="score"></p>
+<p id="timer"></p>
 
-<!-- Script -->
 <script src="script.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+}
+</script>
 
 </body>
 </html>

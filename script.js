@@ -1,142 +1,44 @@
-let flashcards = [
+let allCards = [
+    { front: "Bow", back: "Rei", belt: "rokkyu" },
+    { front: "Begin", back: "Hajime", belt: "rokkyu" },
+    { front: "Stop", back: "Matte", belt: "rokkyu" },
 
-["Attention!", "Kiyotsuke"],
-["Bow", "Rei"],
-["Begin", "Hajime"],
-["Stop", "Matte"],
-["Practice Hall", "Dojo"],
-["Teacher", "Sensei"],
-["Yes", "Hai"],
-["No", "Iie"],
-["Please", "Onegai Shimasu"],
-["Thank you", "Domo Arigato"],
-["That is all", "Sore made"],
-["Don't Move", "Sono Mama"],
-["Continue", "Yoshi"],
-["Time!", "Jikan"],
+    { front: "Off balance", back: "Kuzushi", belt: "gokyu" },
+    { front: "Entry", back: "Tsukuri", belt: "gokyu" },
 
-["Sitting on knees", "Seiza"],
-["Sitting cross legged", "Anza"],
-["Following Foot Walking", "Tsugi Ashi"],
-["Normal Foot Walking", "Ayumi Ashi"],
-["Left", "Hidari"],
-["Right", "Migi"],
-["Natural posture", "Shizen Hontai"],
-["Defensive posture", "Jigo Hontai"],
+    { front: "Execution", back: "Kake", belt: "yonkyu" },
+    { front: "Throw", back: "Nage", belt: "yonkyu" },
 
-["Person performing technique", "Tori"],
-["Person receiving technique", "Uke"],
-["Referee", "Shimpan"],
+    { front: "Hip techniques", back: "Koshi Waza", belt: "sankyu" },
+    { front: "Foot techniques", back: "Ashi Waza", belt: "sankyu" },
 
-["Judo uniform", "Judogi"],
-["Judo belt", "Obi"],
-["Judo jacket", "Uwagi"],
-["Judo pants", "Zubon"],
-["Judo sleeve", "Sode"],
-["Judo lapel", "Eri"],
+    { front: "Joint lock", back: "Kansetsu Waza", belt: "nikyu" },
 
-["Falling methods", "Ukemi"],
-["Rear falling", "Koho Ukemi"],
-["Forward rolling falling", "Zempo Kaiten Ukemi"],
-
-["Free Practice", "Randori"],
-["Formal prearranged practice", "Kata"],
-["General practice", "Keiko"],
-["Solo practice", "Tandoku Renshu"],
-["Paired practice", "Sotai Renshu"],
-
-["Tournament", "Shiai"],
-["Contest area", "Shiaijo"],
-["Judo mats", "Tatami"],
-["Decision", "Hantei"],
-["Win", "Gachi"],
-["Loss", "Make"],
-
-["One point", "Ippon"],
-["Almost Ippon", "Waza ari"],
-["Near Waza ari", "Yuko"],
-["Near yuko", "Koka"],
-["Holddown", "Osae Komi"],
-["Holddown broken", "Toketa"],
-
-["Caution", "Chui"],
-["Warning", "Keikoku"],
-["Disqualification", "Hansoku Make"],
-
-["Off balance", "Kuzushi"],
-["Entry", "Tsukuri"],
-["Execution", "Kake"],
-
-["Sweeping action", "Harai"],
-["Reaping action", "Gari"],
-["Dashing action", "Gake"],
-["Springing action", "Hane"],
-
-["Technique", "Waza"],
-["Throw", "Nage"],
-["Throwing techniques", "Nage Waza"],
-["Grappling techniques", "Katame Waza"],
-["Ground techniques", "Newaza"],
-
-["Standing techniques", "Tachi Waza"],
-["Sacrifice techniques", "Sutemi Waza"],
-
-["Hand techniques", "Te Waza"],
-["Hip techniques", "Koshi Waza"],
-["Foot techniques", "Ashi Waza"],
-
-["Major hip throw", "Ogoshi"],
-["Major outer reap", "Osoto Gari"],
-
-["Outside", "Soto"],
-["Inside", "Uchi"],
-
-["Holding techniques", "Osaekomi Waza"],
-["Choke", "Shime"],
-["Choking techniques", "Shime Waza"],
-["Joint locking techniques", "Kansetsu Waza"],
-
-["Principle of gentleness", "Ju"],
-["Way of life", "Do"],
-["Gentle way", "Judo"],
-["Gentle art", "Jujitsu"],
-["Way of the warrior", "Bushido"],
-
-["First kyu", "Ikkyu"],
-["Second kyu", "Nikyu"],
-["Third kyu", "Sankyu"],
-["Fourth kyu", "Yonkyu"],
-["Fifth kyu", "Gokyu"],
-["Sixth kyu", "Rokkyu"],
-
-["First dan", "Shodan"],
-["Second dan", "Nidan"],
-["Third dan", "Sandan"],
-["Fourth dan", "Yodan"],
-["Fifth dan", "Godan"],
-
-["Mutual welfare", "Jita Kyoei"],
-["Maximum efficiency", "Seiroku Zenyo"],
-
-["Founder of Judo", "Jigoro Kano"],
-["Judo school", "Kodokan"],
-["Kodokan founded", "1882"],
-
-["Parts of a throw", "Kuzushi, Tsukuri, Kake"],
-["Olympics introduction year", "1964"],
-["Ultimate goal of Judo", "Perfection of human character"]
-
+    { front: "Principle of gentleness", back: "Ju", belt: "ikkyu" }
 ];
 
-let currentIndex = 0;
+let flashcards = [...allCards];
+let index = 0;
+
+let mode = "study";
+let instructorMode = false;
+
+let correct = 0;
+let total = 0;
+let timer = 0;
+let timerInterval;
 
 function showCard() {
-    document.getElementById("frontText").innerText = flashcards[currentIndex][0];
-    document.getElementById("backText").innerText = flashcards[currentIndex][1];
-    document.getElementById("counter").innerText =
-        (currentIndex + 1) + " / " + flashcards.length;
+    let card = flashcards[index];
+
+    document.getElementById("frontText").innerText = card.front;
+    document.getElementById("backText").innerText =
+        instructorMode && mode === "quiz" ? "???" : card.back;
 
     document.getElementById("cardInner").classList.remove("flipped");
+
+    document.getElementById("counter").innerText =
+        `${index + 1}/${flashcards.length}`;
 }
 
 function flipCard() {
@@ -144,21 +46,77 @@ function flipCard() {
 }
 
 function nextCard() {
-    currentIndex = (currentIndex + 1) % flashcards.length;
+    index = (index + 1) % flashcards.length;
     showCard();
 }
 
 function prevCard() {
-    currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+    index = (index - 1 + flashcards.length) % flashcards.length;
     showCard();
 }
 
-function shuffleDeck() {
-    flashcards.sort(() => Math.random() - 0.5);
-    currentIndex = 0;
+/* BELT FILTER */
+function setBelt(belt) {
+    if (belt === "all") {
+        flashcards = [...allCards];
+    } else {
+        flashcards = allCards.filter(c => c.belt === belt);
+    }
+    index = 0;
     showCard();
 }
 
+/* MODE */
+function setMode(m) {
+    mode = m;
+
+    if (mode === "quiz") {
+        document.getElementById("quizButtons").style.display = "block";
+        correct = 0;
+        total = 0;
+        startTimer();
+    } else {
+        document.getElementById("quizButtons").style.display = "none";
+        stopTimer();
+    }
+
+    updateScore();
+}
+
+/* QUIZ */
+function answer(isCorrect) {
+    total++;
+    if (isCorrect) correct++;
+
+    nextCard();
+    updateScore();
+}
+
+function updateScore() {
+    document.getElementById("score").innerText =
+        mode === "quiz" ? `Score: ${correct}/${total}` : "";
+}
+
+/* INSTRUCTOR MODE */
+function toggleInstructor() {
+    instructorMode = !instructorMode;
+    showCard();
+}
+
+/* TIMER */
+function startTimer() {
+    timer = 0;
+    timerInterval = setInterval(() => {
+        timer++;
+        document.getElementById("timer").innerText = `Time: ${timer}s`;
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    document.getElementById("timer").innerText = "";
+}
+
+/* INIT */
 document.getElementById("card").addEventListener("click", flipCard);
-
 showCard();

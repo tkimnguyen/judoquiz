@@ -70,3 +70,13 @@ button:hover {
     font-size: 14px;
     color: #ccc;
 }
+
+select {
+    padding: 10px;
+    margin: 10px;
+}
+
+#score, #timer {
+    font-size: 18px;
+    margin-top: 10px;
+}
