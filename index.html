@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Judo Flashcards</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🥋 Judo Flashcards</h1>
+
+<div class="card" id="card">
+    <div class="card-inner" id="cardInner">
+        <div class="card-front" id="frontText"></div>
+        <div class="card-back" id="backText"></div>
+    </div>
+</div>
+
+<div class="controls">
+    <button onclick="prevCard()">Previous</button>
+    <button onclick="flipCard()">Flip</button>
+    <button onclick="nextCard()">Next</button>
+</div>
+
+<div class="controls">
+    <button onclick="shuffleDeck()">Shuffle</button>
+</div>
+
+<p id="counter"></p>
+
+<script src="script.js"></script>
+
+</body>
+</html>
