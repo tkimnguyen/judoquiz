@@ -1,3 +1,7 @@
+let gradingMode = false;
+let cleanupMode = false;
+let gradingBelt = null;
+
 let allCards = [
 
 /* ROKKYU */
@@ -177,6 +181,11 @@ function answer(isCorrect) {
     total++;
     if (isCorrect) correct++;
 
+    if (gradingMode && total >= flashcards.length) {
+        finishGrading();
+        return;
+    }
+
     nextCard();
     updateScore();
 }
@@ -204,6 +213,80 @@ function startTimer() {
 function stopTimer() {
     clearInterval(timerInterval);
     document.getElementById("timer").innerText = "";
+}
+
+function startGrading() {
+    gradingMode = true;
+    cleanupMode = false;
+
+    gradingBelt = prompt("Enter belt to test (rokkyu, gokyu, yonkyu, sankyu, nikyu, ikkyu):");
+
+    flashcards = allCards.filter(c => c.belt === gradingBelt);
+
+    shuffleDeck();
+
+    correct = 0;
+    total = 0;
+
+    document.getElementById("quizButtons").style.display = "block";
+
+    showCard();
+}
+
+function finishGrading() {
+    gradingMode = false;
+
+    let percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    let result = percent >= 70 ? "PASS ✅" : "FAIL ❌";
+
+    alert(
+        `Belt Test: ${gradingBelt.toUpperCase()}\n\n` +
+        `Score: ${correct}/${total} (${percent}%)\n\n` +
+        result
+    );
+}
+
+function startCleanup() {
+    cleanupMode = true;
+    gradingMode = false;
+
+    flashcards = allCards.filter(c => c.belt === "unknown");
+    index = 0;
+
+    document.getElementById("cleanupControls").style.display = "block";
+    document.getElementById("quizButtons").style.display = "none";
+
+    showCard();
+}
+
+function assignBelt() {
+    let selectedBelt = document.getElementById("beltAssign").value;
+
+    let card = flashcards[index];
+
+    // update original dataset
+    let match = allCards.find(c =>
+        c.front === card.front && c.back === card.back
+    );
+
+    if (match) {
+        match.belt = selectedBelt;
+    }
+
+    nextCard();
+}
+
+function exportData() {
+    let dataStr = JSON.stringify(allCards, null, 2);
+
+    let blob = new Blob([dataStr], { type: "application/json" });
+    let url = URL.createObjectURL(blob);
+
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "judo-curriculum.json";
+    a.click();
 }
 
 /* INIT */

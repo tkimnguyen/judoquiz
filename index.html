@@ -18,6 +18,7 @@
     <button onclick="setMode('study')">Study</button>
     <button onclick="setMode('quiz')">Quiz</button>
     <button onclick="toggleInstructor()">Instructor Mode</button>
+    <button onclick="exportData()">Export Curriculum</button>
 </div>
 
 <!-- BELT FILTER -->
@@ -30,6 +31,7 @@
         <option value="sankyu">Sankyu</option>
         <option value="nikyu">Nikyu</option>
         <option value="ikkyu">Ikkyu</option>
+        <option value="unknown">Needs Review</option>
     </select>
 </div>
 
@@ -51,6 +53,26 @@
     <button onclick="prevCard()">Prev</button>
     <button onclick="flipCard()">Flip</button>
     <button onclick="nextCard()">Next</button>
+</div>
+
+<!-- NEW MODES -->
+<div class="controls">
+    <button onclick="startGrading()">Grading Mode</button>
+    <button onclick="startCleanup()">Cleanup Mode</button>
+</div>
+
+<!-- CLEANUP ASSIGN -->
+<div id="cleanupControls" class="controls" style="display:none;">
+    <select id="beltAssign">
+        <option value="rokkyu">Rokkyu</option>
+        <option value="gokyu">Gokyu</option>
+        <option value="yonkyu">Yonkyu</option>
+        <option value="sankyu">Sankyu</option>
+        <option value="nikyu">Nikyu</option>
+        <option value="ikkyu">Ikkyu</option>
+    </select>
+
+    <button onclick="assignBelt()">Assign</button>
 </div>
 
 <p id="counter"></p>
