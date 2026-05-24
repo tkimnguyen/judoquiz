@@ -11,15 +11,6 @@ let examMode = false;
 let touchStartX = 0;
 let touchEndX = 0;
 
-let cardInner = document.getElementById("cardInner");
-
-cardInner.classList.add(isCorrect ? "correctFlash" : "wrongFlash");
-
-setTimeout(() => {
-    cardInner.classList.remove("correctFlash", "wrongFlash");
-}, 300);
-
-
 function toggleExamMode() {
     examMode = !examMode;
 }
