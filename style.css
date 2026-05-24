@@ -22,6 +22,7 @@ h1 {
     transition: transform 0.6s;
     transform-style: preserve-3d;
     position: relative;
+    transition: transform 0.4s;
 }
 
 .flipped {
@@ -79,4 +80,12 @@ select {
 #score, #timer {
     font-size: 18px;
     margin-top: 10px;
+}
+
+.correctFlash {
+    background-color: #2ecc71 !important;
+}
+
+.wrongFlash {
+    background-color: #e74c3c !important;
 }

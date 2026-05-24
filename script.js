@@ -6,6 +6,45 @@ let testLength = 20;
 let currentTestIndex = 0;
 let studentName = "";
 let testActive = false;
+let examMode = false;
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+let cardInner = document.getElementById("cardInner");
+
+cardInner.classList.add(isCorrect ? "correctFlash" : "wrongFlash");
+
+setTimeout(() => {
+    cardInner.classList.remove("correctFlash", "wrongFlash");
+}, 300);
+
+
+function toggleExamMode() {
+    examMode = !examMode;
+}
+
+function handleSwipe() {
+    let diff = touchEndX - touchStartX;
+
+    if (diff > 50) {
+        prevCard(); // swipe right
+    } else if (diff < -50) {
+        nextCard(); // swipe left
+    }
+}
+
+// Attach listeners
+const card = document.getElementById("card");
+
+card.addEventListener("touchstart", e => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+card.addEventListener("touchend", e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
 
 let allCards = [
 
@@ -269,18 +308,33 @@ let timerInterval;
 
 function showCard() {
     let card = flashcards[index];
+    let cardInner = document.getElementById("cardInner");
 
+    // 🔴 Disable animation temporarily
+    cardInner.style.transition = "none";
+
+    // ✅ Force card back to front immediately
+    cardInner.classList.remove("flipped");
+
+    // ✅ Force browser to apply the change
+    cardInner.offsetHeight; // forces reflow (important!)
+
+    // ✅ Now update text
     document.getElementById("frontText").innerText = card.front;
     document.getElementById("backText").innerText =
         instructorMode && mode === "quiz" ? "???" : card.back;
 
-    document.getElementById("cardInner").classList.remove("flipped");
+    // ✅ Re-enable animation
+    cardInner.style.transition = "transform 0.6s";
 
+    // Update counter
     document.getElementById("counter").innerText =
         `${index + 1}/${flashcards.length}`;
 }
 
 function flipCard() {
+    if (examMode) return; // ❌ disable manual flipping
+
     document.getElementById("cardInner").classList.toggle("flipped");
 }
 
@@ -327,15 +381,17 @@ function answer(isCorrect) {
     total++;
     if (isCorrect) correct++;
 
-    if (testActive) {
-        currentTestIndex++;
+    if (examMode) {
+        // ✅ Show answer AFTER grading
+        document.getElementById("backText").innerText =
+            flashcards[index].back;
 
-        if (currentTestIndex >= testQuestions.length) {
-            finishTest();
-            return;
-        }
+        document.getElementById("cardInner").classList.add("flipped");
 
-        showTestCard();
+        // wait briefly before next card
+        setTimeout(() => {
+            nextCard();
+        }, 800);
     } else {
         nextCard();
     }
