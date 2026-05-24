@@ -1,6 +1,11 @@
 let gradingMode = false;
 let cleanupMode = false;
 let gradingBelt = null;
+let testQuestions = [];
+let testLength = 20;
+let currentTestIndex = 0;
+let studentName = "";
+let testActive = false;
 
 let allCards = [
 
@@ -181,12 +186,19 @@ function answer(isCorrect) {
     total++;
     if (isCorrect) correct++;
 
-    if (gradingMode && total >= flashcards.length) {
-        finishGrading();
-        return;
+    if (testActive) {
+        currentTestIndex++;
+
+        if (currentTestIndex >= testQuestions.length) {
+            finishTest();
+            return;
+        }
+
+        showTestCard();
+    } else {
+        nextCard();
     }
 
-    nextCard();
     updateScore();
 }
 
@@ -287,6 +299,169 @@ function exportData() {
     a.href = url;
     a.download = "judo-curriculum.json";
     a.click();
+}
+
+function startBeltTest() {
+    let belt = prompt("Enter belt (rokkyu, gokyu, yonkyu, sankyu, nikyu, ikkyu)");
+
+    studentName = document.getElementById("studentName").value || "Student";
+
+    let pool = allCards.filter(c => c.belt === belt);
+
+    if (pool.length === 0) {
+        alert("No questions found for this belt!");
+        return;
+    }
+
+    // Shuffle and select 20
+    pool.sort(() => Math.random() - 0.5);
+    testQuestions = pool.slice(0, Math.min(testLength, pool.length));
+
+    currentTestIndex = 0;
+    correct = 0;
+    total = 0;
+    testActive = true;
+
+    document.getElementById("quizButtons").style.display = "block";
+
+    showTestCard();
+}
+
+function showTestCard() {
+    let card = testQuestions[currentTestIndex];
+
+    document.getElementById("frontText").innerText = card.front;
+    document.getElementById("backText").innerText = "???";
+
+    document.getElementById("cardInner").classList.remove("flipped");
+
+    document.getElementById("counter").innerText =
+        `Test ${currentTestIndex + 1} / ${testQuestions.length}`;
+}
+
+function finishTest() {
+    testActive = false;
+
+    let percent = Math.round((correct / total) * 100);
+    let result = percent >= 70 ? "PASS ✅" : "FAIL ❌";
+
+    let record = {
+        name: studentName,
+        score: `${correct}/${total}`,
+        percent: percent,
+        result: result,
+        date: new Date().toLocaleString()
+    };
+
+    saveResult(record);
+
+    alert(
+        `${studentName}\n\nScore: ${record.score} (${percent}%)\n${result}`
+    );
+}
+
+function saveResult(record) {
+    let history = JSON.parse(localStorage.getItem("judoResults") || "[]");
+    history.push(record);
+    localStorage.setItem("judoResults", JSON.stringify(history));
+}
+
+function printResults() {
+    let history = JSON.parse(localStorage.getItem("judoResults") || "[]");
+
+    if (history.length === 0) {
+        alert("No results available");
+        return;
+    }
+
+    let html = `
+    <html>
+    <head>
+        <title>Judo Belt Test Results</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }
+            h1, h2 {
+                text-align: center;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: #eee;
+            }
+            .pass {
+                color: green;
+                font-weight: bold;
+            }
+            .fail {
+                color: red;
+                font-weight: bold;
+            }
+            .footer {
+                margin-top: 40px;
+                text-align: center;
+                font-size: 14px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h1>🥋 Judo Belt Test Results</h1>
+        <h2>Dojo Evaluation Report</h2>
+
+        <table>
+            <tr>
+                <th>Student Name</th>
+                <th>Score</th>
+                <th>Percent</th>
+                <th>Result</th>
+                <th>Date</th>
+            </tr>
+    `;
+
+    history.forEach(r => {
+        let resultClass = r.result.includes("PASS") ? "pass" : "fail";
+
+        html += `
+        <tr>
+            <td>${r.name}</td>
+            <td>${r.score}</td>
+            <td>${r.percent}%</td>
+            <td class="${resultClass}">${r.result}</td>
+            <td>${r.date}</td>
+        </tr>`;
+    });
+
+    html += `
+        </table>
+
+        <div class="footer">
+            <p>Instructor Signature: _____________________________</p>
+            <p>Date: _____________________________</p>
+        </div>
+
+    </body>
+    </html>
+    `;
+
+    let win = window.open("", "", "width=900,height=700");
+    win.document.write(html);
+    win.document.close();
+
+    // Delay ensures content renders before print dialog
+    setTimeout(() => {
+        win.print();
+    }, 500);
 }
 
 /* INIT */
